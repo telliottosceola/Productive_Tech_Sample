@@ -2,7 +2,7 @@
 #include <MCP23008.h>
 #include <HardwareSerial.h>
 
-MCP23008 board;
+MCP23008 relay;
 HardwareSerial serial1(2);
 
 void inputChangeHandler(uint8_t input, uint8_t newState);
@@ -17,6 +17,9 @@ void setup() {
   relay.setInputs(255);
   relay.registerInputChangeCallback(inputChangeHandler);
   relay.init(10);
+
+  Serial.begin(115200);
+  serial1.begin(115200);
 }
 
 void loop() {
@@ -31,14 +34,14 @@ void loop() {
     lastSwitch = millis();
     if(bankState < 16){
       bankState++;
-      board.setBankStatus(state);
+      relay.setBankStatus(bankState);
     }else{
       bankState = 0;
-      board.setBankStatus(0);
+      relay.setBankStatus(0);
     }
   }
   //loop the board to check inputs
-  board.loop();
+  relay.loop();
 }
 
 void inputChangeHandler(uint8_t input, uint8_t newState){
